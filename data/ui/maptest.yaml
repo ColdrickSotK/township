@@ -1,0 +1,15 @@
+definition:
+  object: window
+  properties:
+    width: 1280
+    height: 800
+    colour: [0, 0, 0]
+    text: Township Map Generator
+  children:
+  - object: container
+    properties:
+      name: minimap-panel
+      width: 256
+      height: 256
+      colour: [0, 0, 0]
+      position: [10, 10]
