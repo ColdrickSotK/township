@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
 
 from township import images
 
@@ -79,7 +80,11 @@ class Rock(Resource):
         super(Rock, self).__init__(chunk, tile, x, y, value)
 
         self.type = 'rock'
-        self.image = images.get_map_resource('rock')
+        ext = 'a' if random.random() > 0.5 else 'b'
+        # TODO(SotK): check tile type not height
+        if tile.height > 0.4:
+            ext += '-shadow'
+        self.image = images.get_map_resource('rock' + ext)
         self.colour = [100, 100, 100]
 
 
@@ -100,8 +105,13 @@ class Tree(Resource):
         super(Tree, self).__init__(chunk, tile, x, y, value)
 
         self.type = 'tree'
-        self.image = images.get_map_resource('tree')
+        ext = self.get_variation()
+        self.image = images.get_map_resource('tree' + ext)
         self.colour = [26, 109, 26]
+
+    def get_variation(self):
+        variations = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+        return variations[random.randint(0, len(variations)-1)]
 
     def draw(self, surface, rendermode='tiles'):
         """Draw the tree onto the given surface.

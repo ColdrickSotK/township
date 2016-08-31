@@ -39,7 +39,7 @@ def load_map_resources():
         path = os.path.join(map_resources_dir, name)
         if path.endswith('.png'):
             image = pygame.image.load(path).convert_alpha()
-            name = name.rstrip('.png')
+            name = name[0:-len('.png')]
             map_resources[name] = image
 
 
@@ -52,6 +52,6 @@ def get_terrain(terraintype='grass'):
 
 def get_map_resource(type='rock'):
     for key in six.iterkeys(map_resources):
-        if type in key:
+        if type == key:
             return map_resources[key]
     return None
