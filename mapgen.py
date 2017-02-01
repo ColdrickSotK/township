@@ -42,13 +42,13 @@ while True:
         window.handle_event(event)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_d:
-                dx = -2
+                dx = -4
             elif event.key == pygame.K_a:
-                dx = 2
+                dx = 4
             elif event.key == pygame.K_s:
-                dy = -2
+                dy = -4
             elif event.key == pygame.K_w:
-                dy = 2
+                dy = 4
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_d:
                 dx = 0
