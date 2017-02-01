@@ -29,19 +29,12 @@ minimap = ui_tree.get('minimap-panel')
 township.images.load_terrain()
 township.images.load_map_resources()
 
-height_noise = township.map.NoiseGenerator(123123456574)
-rock_noise = township.map.NoiseGenerator(1231247542)
-tree_noise = township.map.NoiseGenerator(123128)
-chunks = []
+map = township.map.Map(123123456574)
+
 dx = dy = 0
 xoffset = 0
 yoffset = 0
 tiles = True
-for x in range(-8, 8):
-    row = []
-    for y in range(-8, 8):
-        row.append(township.map.Chunk(x, y, height_noise, rock_noise, tree_noise))
-    chunks.append(row)
 
 clock = pygame.time.Clock()
 while True:
@@ -73,8 +66,8 @@ while True:
     if dy != 0:
         yoffset += dy
     window.image.fill((0, 0, 0))
-    for row in chunks:
-        for chunk in row:
+    for column in map.chunks:
+        for chunk in column:
             chunk.draw(window.image, xoffset, yoffset, 'tiles')
             chunk.draw(minimap.surface, 128, 128, 'pixels')
     window.update()

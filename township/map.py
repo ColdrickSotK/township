@@ -235,3 +235,57 @@ class Chunk(object):
         else:
             raise Exception('Unrecognised render mode for Chunk: %s' %
                             rendermode)
+
+
+class Map(object):
+
+    """A container for a set of chunks.
+
+    This represents all of the chunks that are currently loaded in memory.
+
+    """
+
+    def __init__(self, seed, x=10, y=10):
+        """Initialize a Map.
+
+        This creates a map with a given seed, and generates an
+        initial set of chunks of a given size.
+
+        :param seed: Seed to use when creating noise generators.
+        :param x: How many columns of chunks to create. Default 10.
+        :param y: How many rows of chunks to create. Default 10.
+
+        """
+        self._make_generators(seed)
+        self.chunks = self._generate_initial_chunks(x, y)
+
+    def _make_generators(self, seed):
+        """Make the noise generators for this map.
+
+        :param seed: The seed to use when creating the noise generators.
+
+        """
+        random.seed(seed)
+        seeds = [random.random() for _ in range(0, 3)]
+        self.height_noise = NoiseGenerator(seeds[0])
+        self.rock_noise = NoiseGenerator(seeds[1])
+        self.tree_noise = NoiseGenerator(seeds[2])
+
+    def _generate_initial_chunks(self, x, y):
+        """Generate some initial chunks for the map.
+
+        :param x: The number of columns to generate.
+        :param y: The number of rows to generate.
+
+        """
+        chunks = []
+        for chunk_x in range(0, x):
+            column = []
+            for chunk_y in range(0, y):
+                column.append(Chunk(
+                    chunk_x, chunk_y,
+                    self.height_noise,
+                    self.rock_noise,
+                    self.tree_noise))
+            chunks.append(column)
+        return chunks
