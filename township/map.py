@@ -293,6 +293,21 @@ class Map(object):
             chunks.append(column)
         return chunks
 
+    def _get_chunk_at(self, x, y):
+        """Return the chunk at a given x and y coordinate.
+
+        The given coordinate is assumed to be pixel-scale rather than
+        tile or chunk scale.
+
+        :param x: The x coordinate.
+        :param y: The y coordinate.
+
+        """
+        for column in self.chunks:
+            for chunk in column:
+                if chunk.x == int((x / 16) / 16) and chunk.y == int((y / 16) / 16):
+                    return chunk
+
     def draw(self, surface, xoffset, yoffset, minimap=None):
         """Draw the map onto a surface with a given offset.
 
