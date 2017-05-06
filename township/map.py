@@ -195,6 +195,9 @@ class Chunk(object):
 
         self.render()
 
+    def __repr__(self):
+        return '<Chunk x=%s y=%s>' % (self.x, self.y)
+
     def get_tile(self, x, y):
         """Get the tile at a given (x, y) position in the chunk.
 
