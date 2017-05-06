@@ -308,6 +308,24 @@ class Map(object):
                 if chunk.x == int((x / 16) / 16) and chunk.y == int((y / 16) / 16):
                     return chunk
 
+    def update(self, surface, xoffset, yoffset):
+        """Update the Map status for the current frame.
+
+        This function loads and unloads chunks in order to have only
+        a relevant portion of the map rendering at any given time. If
+        a required chunk does not exist, it is generated.
+
+        :param surface: The surface to draw the map on.
+        :param xoffset: The x coordinate (pixel) in the top left of the
+        display surface.
+        :param yoffset: The y coordinate (pixel) in the top left of the
+        display surface.
+
+        """
+        for x in range(xoffset, xoffset + surface.get_width(), 16*16):
+            for y in range(yoffset, yoffset + surface.get_height(), 16*16):
+                print self._get_chunk_at(x, y)
+
     def draw(self, surface, xoffset, yoffset, minimap=None):
         """Draw the map onto a surface with a given offset.
 
