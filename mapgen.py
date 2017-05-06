@@ -66,10 +66,7 @@ while True:
     if dy != 0:
         yoffset += dy
     window.image.fill((0, 0, 0))
-    for column in map.chunks:
-        for chunk in column:
-            chunk.draw(window.image, xoffset, yoffset, 'tiles')
-            chunk.draw(minimap.surface, 128, 128, 'pixels')
+    map.draw(window.image, xoffset, yoffset, minimap.surface)
     window.update()
     window.draw()
     pygame.display.set_caption('%s' % clock.get_fps())

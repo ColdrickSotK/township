@@ -289,3 +289,20 @@ class Map(object):
                     self.tree_noise))
             chunks.append(column)
         return chunks
+
+    def draw(self, surface, xoffset, yoffset, minimap=None):
+        """Draw the map onto a surface with a given offset.
+
+        :param surface: The surface to draw on.
+        :param xoffset: The x coordinate to draw in the top left.
+        :param yoffset: The y coordinate to draw in the top left.
+        :param minimap: Surface to render a minimap on.
+
+        """
+        if minimap is not None:
+            minimap.fill((0, 0, 0))
+        for column in self.chunks:
+            for chunk in column:
+                chunk.draw(surface, xoffset, yoffset, 'tiles')
+                if minimap is not None:
+                    chunk.draw(minimap, 128 + (xoffset / 16), 128 + (yoffset / 16), 'pixels')
