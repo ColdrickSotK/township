@@ -66,6 +66,7 @@ while True:
     if dy != 0:
         yoffset += dy
     window.image.fill((0, 0, 0))
+    map.update(window.image, xoffset, yoffset)
     map.draw(window.image, xoffset, yoffset, minimap.surface)
     window.update()
     window.draw()
