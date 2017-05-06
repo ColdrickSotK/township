@@ -43,7 +43,7 @@ class NoiseGenerator(object):
         :param x: The x coordinate to get noise at.
         :param y: The y coordinate to get noise at.
         :param octaves: The number of octaves of noise to use.
-        
+
         """
         if octaves > 8:
             octaves = 8
@@ -84,6 +84,7 @@ class Tile(object):
         self.get_image()
 
     def get_image(self):
+        # TODO(SotK): More sane system here
         c = (127 * self.height) + 128
         if self.height < -0.10:
             self.colour = [0, 0, c]
@@ -105,7 +106,7 @@ class Tile(object):
             self.image = images.get_terrain('sand-grass-75')
         elif self.height < -0.015:
             self.colour = [c, c, 0]
-            self.image = images.get_terrain('sand-grass-50') 
+            self.image = images.get_terrain('sand-grass-50')
         elif self.height < 0:
             self.colour = [c, c, 0]
             self.image = images.get_terrain('sand-grass-25')
