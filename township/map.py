@@ -248,7 +248,7 @@ class Map(object):
 
     """
 
-    def __init__(self, seed, x=10, y=10):
+    def __init__(self, seed, x=10, y=10, generate=True):
         """Initialize a Map.
 
         This creates a map with a given seed, and generates an
@@ -260,7 +260,10 @@ class Map(object):
 
         """
         self._make_generators(seed)
-        self.chunks = self._generate_initial_chunks(x, y)
+        self.chunks = {}
+        self.render_set = set()
+        if generate:
+            self.chunks = self._generate_initial_chunks(x, y)
 
     def _make_generators(self, seed):
         """Make the noise generators for this map.
@@ -281,16 +284,14 @@ class Map(object):
         :param y: The number of rows to generate.
 
         """
-        chunks = []
-        for chunk_x in range(0, x):
-            column = []
-            for chunk_y in range(0, y):
-                column.append(Chunk(
+        chunks = {}
+        for chunk_x in range(-x/2, x/2):
+            for chunk_y in range(-x/2, y/2):
+                chunks[(chunk_x, chunk_y)] = Chunk(
                     chunk_x, chunk_y,
                     self.height_noise,
                     self.rock_noise,
-                    self.tree_noise))
-            chunks.append(column)
+                    self.tree_noise)
         return chunks
 
     def _get_chunk_at(self, x, y):
@@ -299,14 +300,22 @@ class Map(object):
         The given coordinate is assumed to be pixel-scale rather than
         tile or chunk scale.
 
+        If there is no chunk at the given position, a new one is generated.
+
         :param x: The x coordinate.
         :param y: The y coordinate.
 
         """
-        for column in self.chunks:
-            for chunk in column:
-                if chunk.x == int((x / 16) / 16) and chunk.y == int((y / 16) / 16):
-                    return chunk
+        chunk_x = int(x / 16 / 16)
+        chunk_y = int(y / 16 / 16)
+        if not (chunk_x, chunk_y) in self.chunks:
+            self.chunks[(chunk_x, chunk_y)] = Chunk(
+                chunk_x, chunk_y,
+                self.height_noise,
+                self.rock_noise,
+                self.tree_noise
+            )
+        return self.chunks[(chunk_x, chunk_y)]
 
     def update(self, surface, xoffset, yoffset):
         """Update the Map status for the current frame.
@@ -322,9 +331,10 @@ class Map(object):
         display surface.
 
         """
-        for x in range(xoffset, xoffset + surface.get_width(), 16*16):
-            for y in range(yoffset, yoffset + surface.get_height(), 16*16):
-                print self._get_chunk_at(x, y)
+        for x in range(-1*xoffset, -1*xoffset + surface.get_width(), 16*16):
+            for y in range(-1*yoffset, -1*yoffset + surface.get_height(), 16*16):
+                chunk = self._get_chunk_at(x, y)
+                self.render_set.add(chunk)
 
     def draw(self, surface, xoffset, yoffset, minimap=None):
         """Draw the map onto a surface with a given offset.
@@ -337,8 +347,10 @@ class Map(object):
         """
         if minimap is not None:
             minimap.fill((0, 0, 0))
-        for column in self.chunks:
-            for chunk in column:
-                chunk.draw(surface, xoffset, yoffset, 'tiles')
-                if minimap is not None:
-                    chunk.draw(minimap, 128 + (xoffset / 16), 128 + (yoffset / 16), 'pixels')
+        print len(self.render_set)
+        for chunk in self.render_set:
+            chunk.draw(surface, xoffset, yoffset, 'tiles')
+
+        if minimap is not None:
+            for chunk in self.chunks.itervalues():
+                chunk.draw(minimap, 128 + (xoffset / 16), 128 + (yoffset / 16), 'pixels')
