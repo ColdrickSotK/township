@@ -6,6 +6,13 @@ definition:
     colour: [0, 0, 0]
     text: Township Map Generator
   children:
+  - object: game
+    properties:
+      name: game-viewport
+      width: 1280
+      height: 800
+      position: [0, 0]
+      color: [0, 0, 0]
   - object: container
     properties:
       name: minimap-panel
