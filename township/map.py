@@ -286,8 +286,8 @@ class Map(object):
 
         """
         chunks = {}
-        for chunk_x in range(-x/2, x/2):
-            for chunk_y in range(-x/2, y/2):
+        for chunk_x in range(-x//2, x//2):
+            for chunk_y in range(-x//2, y//2):
                 chunks[(chunk_x, chunk_y)] = Chunk(
                     chunk_x, chunk_y,
                     self.height_noise,
@@ -348,10 +348,9 @@ class Map(object):
         """
         if minimap is not None:
             minimap.fill((0, 0, 0))
-        print len(self.render_set)
         for chunk in self.render_set:
             chunk.draw(surface, xoffset, yoffset, 'tiles')
 
         if minimap is not None:
-            for chunk in self.chunks.itervalues():
+            for chunk in self.chunks.values():
                 chunk.draw(minimap, 128 + (xoffset / 16), 128 + (yoffset / 16), 'pixels')

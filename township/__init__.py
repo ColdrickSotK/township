@@ -1,2 +1,2 @@
-import images
-import map
+from . import images
+from . import map
