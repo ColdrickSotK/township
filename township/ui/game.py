@@ -105,16 +105,10 @@ class GameViewport(Widget):
                 self.dy = 4
                 return True
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_d:
+            if event.key in (pygame.K_d, pygame.K_a):
                 self.dx = 0
                 return True
-            elif event.key == pygame.K_s:
-                self.dy = 0
-                return True
-            elif event.key == pygame.K_a:
-                self.dx = 0
-                return True
-            elif event.key == pygame.K_w:
+            elif event.key in (pygame.K_s, pygame.K_w):
                 self.dy = 0
                 return True
             elif event.key == pygame.K_o:
