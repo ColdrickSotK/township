@@ -115,6 +115,11 @@ class GameViewport(Widget):
                 self.xoffset = 0
                 self.yoffset = 0
                 return True
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            position = (event.pos[0] - self.xoffset,
+                        event.pos[1] - self.yoffset)
+            self.map.select_tile(*position)
+            return True
         return False
 
     def update(self):

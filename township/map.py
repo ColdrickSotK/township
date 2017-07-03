@@ -79,6 +79,7 @@ class Tile(object):
         self.height_gen = height_gen
         self.x = x
         self.y = y
+        self.selected = False
 
         self.height = self.height_gen.noise2d(x, y, octaves=5)
         self.get_image()
@@ -127,10 +128,20 @@ class Tile(object):
             self.colour = [c, c, c]
             self.image = images.get_terrain('cliffa')
 
+    def select(self):
+        self.selected = not self.selected
+
     def draw(self, surface, rendermode='tiles'):
         if rendermode == 'tiles':
             surface.blit(self.image, ((self.x%16)*self.image.get_width(),
                                       (self.y%16)*self.image.get_height()))
+            if self.selected:
+                selection_surface = pygame.Surface(
+                    (16, 16), flags=pygame.SRCALPHA)
+                selection_surface.fill((0, 0, 0, 128))
+                position = ((self.x%16)*self.image.get_width(),
+                            (self.y%16)*self.image.get_height())
+                surface.blit(selection_surface, position)
         elif rendermode == 'pixels':
             surface.set_at((self.x % 16, self.y % 16), self.colour)
         else:
@@ -162,6 +173,7 @@ class Chunk(object):
         """
         self.x = x
         self.y = y
+        self.dirty = False
 
         sample = images.get_terrain()
         size = (sample.get_width() * 16, sample.get_height() * 16)
@@ -206,8 +218,6 @@ class Chunk(object):
         :param y: The y position of the tile in the chunk.
 
         """
-        x += 16 * self.x
-        y += 16 * self.y
         return self.tiles[x][y]
 
     def render(self):
@@ -229,6 +239,10 @@ class Chunk(object):
 
     def draw(self, surface, xoffset=0, yoffset=0, rendermode='tiles'):
         """Draw the chunk onto the given surface."""
+        if self.dirty:
+            self.dirty = False
+            self.render()
+
         if rendermode == 'tiles':
             pos = (self.x * self.tiled_surface.get_width() + xoffset,
                    self.y * self.tiled_surface.get_height() + yoffset)
@@ -317,6 +331,20 @@ class Map(object):
                 self.tree_noise
             )
         return self.chunks[(chunk_x, chunk_y)]
+
+    def select_tile(self, x, y):
+        """Select the tile at a given x and y coordinate.
+
+        :param x: The x coordinate.
+        :param y: The y coordinate.
+
+        """
+        chunk = self._get_chunk_at(x, y)
+
+        tile_x = int((x / 16) % 16)
+        tile_y = int((y / 16) % 16)
+        chunk.get_tile(tile_x, tile_y).select()
+        chunk.dirty = True
 
     def update(self, surface, xoffset, yoffset):
         """Update the Map status for the current frame.
