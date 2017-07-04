@@ -375,6 +375,7 @@ class Map(object):
         y_range = range(-1 * yoffset,
                         -1 * yoffset + surface.get_height() + chunk_size,
                         chunk_size)
+        self.render_set = set()
         for x in x_range:
             for y in y_range:
                 chunk = self._get_chunk_at(x, y)
