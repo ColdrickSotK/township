@@ -323,6 +323,12 @@ class Map(object):
         """
         chunk_x = int(x / 16 / 16)
         chunk_y = int(y / 16 / 16)
+
+        if x < 0 and (x / 16) % 16 != 0:
+            chunk_x -= 1
+        if y < 0 and (y / 16) % 16 != 0:
+            chunk_y -= 1
+
         if not (chunk_x, chunk_y) in self.chunks:
             self.chunks[(chunk_x, chunk_y)] = Chunk(
                 chunk_x, chunk_y,
