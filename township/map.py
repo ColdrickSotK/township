@@ -395,5 +395,10 @@ class Map(object):
             chunk.draw(surface, xoffset, yoffset, 'tiles')
 
         if minimap is not None:
+            minimap_x_offset = minimap.get_width() / 2
+            minimap_y_offset = minimap.get_height() / 2
             for chunk in self.chunks.values():
-                chunk.draw(minimap, 128 + (xoffset / 16), 128 + (yoffset / 16), 'pixels')
+                chunk.draw(minimap,
+                           minimap_x_offset + (xoffset / 16),
+                           minimap_y_offset + (yoffset / 16),
+                           'pixels')
