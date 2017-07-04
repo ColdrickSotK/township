@@ -148,6 +148,9 @@ class Tile(object):
             raise Exception('Unrecognised render mode for Tile: %s' %
                             rendermode)
 
+    def __repr__(self):
+        return '<Tile x=%s y=%s>' % (self.x, self.y)
+
 
 class Chunk(object):
 
