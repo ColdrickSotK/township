@@ -368,8 +368,15 @@ class Map(object):
         display surface.
 
         """
-        for x in range(-1*xoffset, -1*xoffset + surface.get_width(), 16*16):
-            for y in range(-1*yoffset, -1*yoffset + surface.get_height(), 16*16):
+        chunk_size = 16*16
+        x_range = range(-1 * xoffset,
+                        -1 * xoffset + surface.get_width() + chunk_size,
+                        chunk_size)
+        y_range = range(-1 * yoffset,
+                        -1 * yoffset + surface.get_height() + chunk_size,
+                        chunk_size)
+        for x in x_range:
+            for y in y_range:
                 chunk = self._get_chunk_at(x, y)
                 self.render_set.add(chunk)
 
