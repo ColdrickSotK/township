@@ -85,6 +85,7 @@ class GameViewport(Widget):
         self.state = 'idle'
         self.selected = []
         self.selection_origin = None
+        self.current_tile = None
 
         self.dx = self.dy = self.xoffset = self.yoffset = 0
 
@@ -170,6 +171,10 @@ class GameViewport(Widget):
                             event.pos[1] - self.yoffset)
                 self.select_to_tile(*position)
                 return True
+            elif self.state == 'idle':
+                position = (event.pos[0] - self.xoffset,
+                            event.pos[1] - self.yoffset)
+                self.current_tile = self.map.get_tile(*position)
         elif event.type == pygame.MOUSEBUTTONUP:
             self.state = 'idle'
         return False
