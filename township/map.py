@@ -341,8 +341,8 @@ class Map(object):
             )
         return self.chunks[(chunk_x, chunk_y)]
 
-    def select_tile(self, x, y):
-        """Select the tile at a given x and y coordinate.
+    def get_tile(self, x, y):
+        """Get the tile at a given x and y coordinate.
 
         :param x: The x coordinate.
         :param y: The y coordinate.
@@ -352,8 +352,7 @@ class Map(object):
 
         tile_x = int((x / 16) % 16)
         tile_y = int((y / 16) % 16)
-        chunk.get_tile(tile_x, tile_y).select()
-        chunk.dirty = True
+        return chunk.get_tile(tile_x, tile_y)
 
     def update(self, surface, xoffset, yoffset):
         """Update the Map status for the current frame.

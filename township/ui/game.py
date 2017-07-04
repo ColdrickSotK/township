@@ -82,8 +82,50 @@ class GameViewport(Widget):
         # Should be loading a map that was pre-generated in
         # the menu screen.
         self.map = township.map.Map(123123456574)
+        self.state = 'idle'
+        self.selected = []
+        self.selection_origin = None
 
         self.dx = self.dy = self.xoffset = self.yoffset = 0
+
+    def clear_selection(self):
+        for tile in self.selected:
+            tile.select()
+            tile.chunk.dirty = True
+        self.selected = []
+
+    def select_tile(self, x, y):
+        tile = self.map.get_tile(x, y)
+        tile.select()
+        tile.chunk.dirty = True
+        self.selection_origin = tile
+        self.selected.append(tile)
+
+    def select_to_tile(self, x, y):
+        if not self.selected:
+            self.select_tile(x, y)
+            return
+        tile = self.map.get_tile(x, y)
+
+        x_range = range(min(self.selection_origin.x, tile.x),
+                        max(self.selection_origin.x, tile.x) + 1)
+        y_range = range(min(self.selection_origin.y, tile.y),
+                        max(self.selection_origin.y, tile.y) + 1)
+
+        selection = []
+        for tile_x in x_range:
+            for tile_y in y_range:
+                tile = self.map.get_tile(tile_x * 16, tile_y * 16)
+                if not tile.selected:
+                    tile.select()
+                    tile.chunk.dirty = True
+                selection.append(tile)
+
+        for tile in self.selected:
+            if tile not in selection:
+                tile.select()
+                tile.chunk.dirty = True
+        self.selected = selection
 
     def handle_event(self, event):
         """Handle an event.
@@ -116,10 +158,20 @@ class GameViewport(Widget):
                 self.yoffset = 0
                 return True
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            self.state = 'selecting'
+            self.clear_selection()
             position = (event.pos[0] - self.xoffset,
                         event.pos[1] - self.yoffset)
-            self.map.select_tile(*position)
+            self.select_tile(*position)
             return True
+        elif event.type == pygame.MOUSEMOTION:
+            if self.state == 'selecting':
+                position = (event.pos[0] - self.xoffset,
+                            event.pos[1] - self.yoffset)
+                self.select_to_tile(*position)
+                return True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.state = 'idle'
         return False
 
     def update(self):
