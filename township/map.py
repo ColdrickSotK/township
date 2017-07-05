@@ -144,6 +144,9 @@ class Tile(object):
     def select(self):
         self.selected = not self.selected
 
+    def get_resource(self):
+        return self.chunk.get_resource(self.x%16, self.y%16)
+
     def draw(self, surface, rendermode='tiles'):
         if rendermode == 'tiles':
             surface.blit(self.image, ((self.x%16)*self.image.get_width(),
@@ -232,6 +235,19 @@ class Chunk(object):
 
     def __repr__(self):
         return '<Chunk x=%s y=%s>' % (self.x, self.y)
+
+    def get_resource(self, x, y):
+        """Get the resource at a given (x, y) position in the chunk.
+
+        :param x: The x position of the resource in the chunk.
+        :param y: The y position of the resource in the chunk.
+
+        """
+        rock = self.rocks[x][y]
+        tree = self.trees[x][y]
+        if rock is not None:
+            return rock
+        return tree
 
     def get_tile(self, x, y):
         """Get the tile at a given (x, y) position in the chunk.
