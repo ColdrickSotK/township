@@ -90,43 +90,56 @@ class Tile(object):
         if self.height < -0.10:
             self.colour = [0, 0, c]
             self.image = images.get_terrain('ocean')
+            self.type = 'water'
         elif self.height < -0.088:
             self.colour = [0, 0, c]
             self.image = images.get_terrain('water-sand-75')
+            self.type = 'water'
         elif self.height < -0.075:
             self.colour = [0, 0, c]
             self.image = images.get_terrain('water-sand-50')
+            self.type = 'water'
         elif self.height < -0.063:
             self.colour = [0, 0, c]
             self.image = images.get_terrain('water-sand-25')
+            self.type = 'sand'
         elif self.height < -0.05:
             self.colour = [c, c, 0]
             self.image = images.get_terrain('beach')
+            self.type = 'sand'
         elif self.height < -0.035:
             self.colour = [c, c, 0]
             self.image = images.get_terrain('sand-grass-75')
+            self.type = 'sand'
         elif self.height < -0.015:
             self.colour = [c, c, 0]
             self.image = images.get_terrain('sand-grass-50')
+            self.type = 'sand'
         elif self.height < 0:
             self.colour = [c, c, 0]
             self.image = images.get_terrain('sand-grass-25')
+            self.type = 'grass'
         elif self.height < 0.4:
             self.colour = [0, c, 0]
             ext = 'a' if random.random() > 0.1 else 'b'
             self.image = images.get_terrain('grass' + ext)
+            self.type = 'grass'
         elif self.height < 0.425:
             self.colour = [c, c, c]
             self.image = images.get_terrain('cliff-grass-25')
+            self.type = 'upland'
         elif self.height < 0.46:
             self.colour = [c, c, c]
             self.image = images.get_terrain('cliff-grass-50')
+            self.type = 'upland'
         elif self.height < 0.5:
             self.colour = [c, c, c]
             self.image = images.get_terrain('cliff-grass-75')
+            self.type = 'mountain'
         else:
             self.colour = [c, c, c]
             self.image = images.get_terrain('cliffa')
+            self.type = 'mountain'
 
     def select(self):
         self.selected = not self.selected
