@@ -42,6 +42,9 @@ class Resource(object):
         self.image = None
         self.colour = [255, 255, 255]
 
+    def __str__(self):
+        return '%d %s' % (self.value, self.type)
+
     def draw(self, surface, rendermode='tiles'):
         """Draw the resource onto the given surface.
 
@@ -79,7 +82,7 @@ class Rock(Resource):
         """
         super(Rock, self).__init__(chunk, tile, x, y, value)
 
-        self.type = 'rock'
+        self.type = 'stone'
         ext = 'a' if random.random() > 0.5 else 'b'
         # TODO(SotK): check tile type not height
         if tile.height > 0.4:
@@ -104,7 +107,7 @@ class Tree(Resource):
         """
         super(Tree, self).__init__(chunk, tile, x, y, value)
 
-        self.type = 'tree'
+        self.type = 'wood'
         ext = self.get_variation()
         self.image = images.get_map_resource('tree' + ext)
         self.colour = [26, 109, 26]
