@@ -213,10 +213,16 @@ class Chunk(object):
                 rock = rock_gen.noise2d(u, v, octaves=5, amplitude=0.025)
                 if rock + tile.height > 0.75:
                     rock_col.append(Rock(self, tile, u, v, 100))
+                else:
+                    rock_col.append(None)
                 tree = tree_gen.noise2d(u, v, octaves=5, amplitude=0.05)
                 if tile.height > 0 and tile.height < 0.45 and tree > 0.3:
                     if rock + tile.height < 0.75:
                         tree_col.append(Tree(self, tile, u, v, 100))
+                    else:
+                        tree_col.append(None)
+                else:
+                    tree_col.append(None)
                 tile_col.append(tile)
             self.tiles.append(tile_col)
             self.rocks.append(rock_col)
@@ -246,10 +252,14 @@ class Chunk(object):
         # overlay
         for col in self.rocks:
             for rock in col:
+                if rock is None:
+                    continue
                 rock.draw(self.tiled_surface, rendermode='tiles')
                 rock.draw(self.pixel_surface, rendermode='pixels')
         for col in self.trees:
             for tree in col:
+                if tree is None:
+                    continue
                 tree.draw(self.tiled_surface, rendermode='tiles')
                 tree.draw(self.pixel_surface, rendermode='pixels')
 
