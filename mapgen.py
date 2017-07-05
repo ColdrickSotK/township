@@ -34,7 +34,18 @@ def get_current_tile_info(event=None, widget=None, **kwargs):
     if ui_tree is None:
         return 'No tile selected'
     game = ui_tree.get('game-viewport')
-    return str(game.current_tile)
+    tile = game.current_tile
+    tile_info = """Tile: (%d, %d)
+
+Type: %s
+Height: %dm
+Resources: %s""" % (
+        tile.x,
+        tile.y,
+        tile.type.capitalize(),
+        tile.height * 400,
+        tile.get_resource())
+    return tile_info
 
 
 pygame.init()
