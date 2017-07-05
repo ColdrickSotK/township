@@ -24,8 +24,8 @@ definition:
     properties:
       name: tile-details
       width: 200
-      height: 300
-      position: [1070, 490]
+      height: 100
+      position: [1070, 690]
       color: [0, 0, 0]
       opacity: 50%
     children:
