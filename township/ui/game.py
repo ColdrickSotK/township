@@ -159,12 +159,14 @@ class GameViewport(Widget):
                 self.yoffset = 0
                 return True
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            self.state = 'selecting'
-            self.clear_selection()
-            position = (event.pos[0] - self.xoffset,
-                        event.pos[1] - self.yoffset)
-            self.select_tile(*position)
-            return True
+            # TODO(SotK): Make this 1 a constant. It is the left mouse button.
+            if event.button == 1:
+                self.state = 'selecting'
+                self.clear_selection()
+                position = (event.pos[0] - self.xoffset,
+                            event.pos[1] - self.yoffset)
+                self.select_tile(*position)
+                return True
         elif event.type == pygame.MOUSEMOTION:
             if self.state == 'selecting':
                 position = (event.pos[0] - self.xoffset,
@@ -177,6 +179,13 @@ class GameViewport(Widget):
                 self.current_tile = self.map.get_tile(*position)
         elif event.type == pygame.MOUSEBUTTONUP:
             self.state = 'idle'
+            # TODO(SotK): Make this 3 a constant. It is the right mouse button.
+            if event.button == 3:
+                for tile in self.selected:
+                    tile.select()
+                    tile.chunk.dirty = True
+                self.selected = []
+                return True
         return False
 
     def update(self):
