@@ -81,6 +81,8 @@ class Tile(object):
         self.y = y
         self.selected = False
 
+        self.content = []
+
         self.height = self.height_gen.noise2d(x, y, octaves=5)
         self.get_image()
 
