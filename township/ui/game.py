@@ -135,23 +135,23 @@ class GameViewport(Widget):
 
         """
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d:
+            if event.key == pygame.K_RIGHT:
                 self.dx = -4
                 return True
-            elif event.key == pygame.K_a:
+            elif event.key == pygame.K_LEFT:
                 self.dx = 4
                 return True
-            elif event.key == pygame.K_s:
+            elif event.key == pygame.K_DOWN:
                 self.dy = -4
                 return True
-            elif event.key == pygame.K_w:
+            elif event.key == pygame.K_UP:
                 self.dy = 4
                 return True
         elif event.type == pygame.KEYUP:
-            if event.key in (pygame.K_d, pygame.K_a):
+            if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 self.dx = 0
                 return True
-            elif event.key in (pygame.K_s, pygame.K_w):
+            elif event.key in (pygame.K_UP, pygame.K_DOWN):
                 self.dy = 0
                 return True
             elif event.key == pygame.K_o:
