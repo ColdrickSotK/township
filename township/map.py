@@ -21,6 +21,7 @@ import pygame
 
 from township import conf
 from township import images
+from township.constructions import Stockpile
 from township.resources import Rock, Tree
 
 
@@ -160,6 +161,14 @@ class Tile(object):
                 position = ((self.x%16)*self.image.get_width(),
                             (self.y%16)*self.image.get_height())
                 surface.blit(selection_surface, position)
+            for item in self.content:
+                if isinstance(item, Stockpile):
+                    stockpile_surface = pygame.Surface(
+                        (16, 16), flags=pygame.SRCALPHA)
+                    stockpile_surface.fill((0, 0, 0, 64))
+                    position = ((self.x%16)*self.image.get_width(),
+                                (self.y%16)*self.image.get_height())
+                    surface.blit(stockpile_surface, position)
         elif rendermode == 'pixels':
             surface.set_at((self.x % 16, self.y % 16), self.colour)
         else:
@@ -321,6 +330,7 @@ class Map(object):
         self._make_generators(seed)
         self.chunks = {}
         self.render_set = set()
+        self.stockpiles = []
         if generate:
             self.chunks = self._generate_initial_chunks(x, y)
 
