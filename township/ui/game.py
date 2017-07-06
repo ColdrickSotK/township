@@ -82,6 +82,9 @@ class GameViewport(Widget):
         # Should be loading a map that was pre-generated in
         # the menu screen.
         self.map = township.map.Map(123123456574)
+
+        # TODO(SotK): There needs to be a Game object that handles things
+        # like selection, plus things like buildings and units
         self.state = 'idle'
         self.selected = []
         self.selection_origin = None
@@ -157,6 +160,14 @@ class GameViewport(Widget):
             elif event.key == pygame.K_o:
                 self.xoffset = 0
                 self.yoffset = 0
+                return True
+            elif event.key == pygame.K_s and self.selected:
+                stockpile = township.constructions.Stockpile(self.selected)
+                self.map.stockpiles.append(stockpile)
+                for tile in self.selected:
+                    tile.select()
+                    tile.chunk.dirty = True
+                self.selected = []
                 return True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # TODO(SotK): Make this 1 a constant. It is the left mouse button.
