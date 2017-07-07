@@ -144,7 +144,12 @@ class Tile(object):
             self.image = images.get_terrain('cliffa')
             self.type = 'mountain'
 
-    def select(self):
+    def select(self, select_items=True):
+        if not self.selected and select_items:
+            for item in self.content:
+                if isinstance(item, Stockpile):
+                    item.select()
+                    return item
         self.selected = not self.selected
 
     def get_resource(self):

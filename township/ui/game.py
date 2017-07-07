@@ -87,6 +87,7 @@ class GameViewport(Widget):
         # like selection, plus things like buildings and units
         self.state = 'idle'
         self.selected = []
+        self.selected_items = []
         self.selection_origin = None
         self.current_tile = None
 
@@ -96,14 +97,23 @@ class GameViewport(Widget):
         for tile in self.selected:
             tile.select()
             tile.chunk.dirty = True
+        for item in self.selected_items:
+            item.select()
         self.selected = []
+        self.selected_items = []
 
     def select_tile(self, x, y):
         tile = self.map.get_tile(x, y)
-        tile.select()
+        selected = tile.select()
         tile.chunk.dirty = True
         self.selection_origin = tile
-        self.selected.append(tile)
+        if selected is None:
+            self.selected.append(tile)
+            for item in self.selected_items:
+                item.select()
+            self.selected_items = []
+        else:
+            self.selected_items.append(selected)
 
     def select_to_tile(self, x, y):
         if not self.selected:
@@ -121,7 +131,7 @@ class GameViewport(Widget):
             for tile_y in y_range:
                 tile = self.map.get_tile(tile_x * 16, tile_y * 16)
                 if not tile.selected:
-                    tile.select()
+                    tile.select(select_items=False)
                     tile.chunk.dirty = True
                 selection.append(tile)
 
