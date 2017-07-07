@@ -165,7 +165,10 @@ class Tile(object):
                 if isinstance(item, Stockpile):
                     stockpile_surface = pygame.Surface(
                         (16, 16), flags=pygame.SRCALPHA)
-                    stockpile_surface.fill((0, 0, 0, 64))
+                    alpha = 64
+                    if item.selected:
+                        alpha = 96
+                    stockpile_surface.fill((0, 0, 0, alpha))
                     position = ((self.x%16)*self.image.get_width(),
                                 (self.y%16)*self.image.get_height())
                     surface.blit(stockpile_surface, position)
