@@ -192,10 +192,7 @@ class GameViewport(Widget):
             self.state = 'idle'
             # TODO(SotK): Make this 3 a constant. It is the right mouse button.
             if event.button == 3:
-                for tile in self.selected:
-                    tile.select()
-                    tile.chunk.dirty = True
-                self.selected = []
+                self.clear_selection()
                 return True
         return False
 
