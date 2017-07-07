@@ -24,6 +24,14 @@ class Stockpile(object):
         :param tiles: The tiles covered by this stockpile.
 
         """
+        self.selected = False
+        self.tiles = tiles
         for tile in tiles:
             tile.content.append(self)
+            tile.chunk.dirty = True
+
+    def select(self):
+        """Select this stockpile."""
+        self.selected = not self.selected
+        for tile in self.tiles:
             tile.chunk.dirty = True
