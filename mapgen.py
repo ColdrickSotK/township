@@ -36,10 +36,9 @@ def get_current_tile_info(event=None, widget=None, **kwargs):
     game = ui_tree.get('game-viewport')
     tile = game.current_tile
     tile_info = """Tile: (%d, %d)
-
-Type: %s
-Height: %dm
-Resources: %s""" % (
+  Type: %s
+  Height: %dm
+  Resources: %s""" % (
         tile.x,
         tile.y,
         tile.type.capitalize(),
