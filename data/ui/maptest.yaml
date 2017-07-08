@@ -41,3 +41,23 @@ definition:
           font-size: 12
           display: relative
           content-bind: get_current_tile_info
+
+  - object: container
+    properties:
+      name: selection-details
+      width: 200
+      height: 100
+      position: [1070, 10]
+      color: [0, 0, 0]
+      opacity: 50%
+    children:
+    - object: label
+      properties:
+        name: selection-info
+        text: 'No tile selected'
+        width: 180
+        position: [10, 10]
+        font: arial
+        font-size: 14
+        display: relative
+        content-bind: get_selection_info

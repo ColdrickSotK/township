@@ -47,10 +47,22 @@ def get_current_tile_info(event=None, widget=None, **kwargs):
     return tile_info
 
 
+def get_selection_info(event=None, widget=None, **kwargs):
+    ui_tree = yamlui.trees.get('maptest.yaml')
+    if ui_tree is None:
+        return 'No UI tree'
+    game = ui_tree.get('game-viewport')
+    try:
+        selected = game.selected_items[0]
+    except IndexError:
+        return 'Nothing selected'
+    return str(selected)
+
 pygame.init()
 
 register_widgets()
 yamlui.callbacks['get_current_tile_info'] = get_current_tile_info
+yamlui.callbacks['get_selection_info'] = get_selection_info
 window = yamlui.generate_ui('data/ui/maptest.yaml')
 
 clock = pygame.time.Clock()

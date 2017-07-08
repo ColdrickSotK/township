@@ -30,6 +30,13 @@ class Stockpile(object):
             tile.content.append(self)
             tile.chunk.dirty = True
 
+        # TODO(SotK): Don't hardcode the maximum contents
+        self.content = [None for tile in tiles]
+        self.tile_max = 100
+
+    def __repr__(self):
+        return 'Stockpile, %d spaces' % len(self.content)
+
     def select(self):
         """Select this stockpile."""
         self.selected = not self.selected
