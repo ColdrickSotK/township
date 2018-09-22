@@ -7,57 +7,58 @@ definition:
     text: Township Map Generator
   children:
   - object: game
+    bind-object: game_controller
     properties:
       name: game-viewport
       width: 1280
       height: 800
       position: [0, 0]
       color: [0, 0, 0]
-
-  - object: container
-    properties:
-      name: minimap-panel
-      width: 256
-      height: 256
-      colour: [0, 0, 0]
-      position: [10, 10]
-
-  - object: container
-    properties:
-      name: tile-details
-      width: 200
-      height: 100
-      position: [1070, 690]
-      color: [0, 0, 0]
-      opacity: 50%
     children:
+    - object: container
+      properties:
+        name: minimap-panel
+        width: 256
+        height: 256
+        colour: [0, 0, 0]
+        position: [10, 10]
+
+    - object: container
+      properties:
+        name: tile-details
+        width: 200
+        height: 100
+        position: [1070, 690]
+        color: [0, 0, 0]
+        opacity: 50%
+      children:
+        - object: label
+          properties:
+            name: tile-info
+            text: 'No tile selected'
+            width: 180
+            position: [10, 10]
+            font: arial
+            font-size: 12
+            display: relative
+            content-bind: get_current_tile_info
+
+    - object: container
+      properties:
+        name: selection-details
+        width: 200
+        height: 100
+        position: [1070, 10]
+        color: [0, 0, 0]
+        opacity: 50%
+      children:
       - object: label
         properties:
-          name: tile-info
+          name: selection-info
           text: 'No tile selected'
           width: 180
           position: [10, 10]
           font: arial
-          font-size: 12
+          font-size: 14
           display: relative
-          content-bind: get_current_tile_info
-
-  - object: container
-    properties:
-      name: selection-details
-      width: 200
-      height: 100
-      position: [1070, 10]
-      color: [0, 0, 0]
-      opacity: 50%
-    children:
-    - object: label
-      properties:
-        name: selection-info
-        text: 'No tile selected'
-        width: 180
-        position: [10, 10]
-        font: arial
-        font-size: 14
-        display: relative
-        content-bind: get_selection_info
+          content-bind: get_selection_info

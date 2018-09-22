@@ -20,6 +20,7 @@ import pygame
 
 import township
 import yamlui
+from yamlui.parsing import parse_children
 from yamlui.util import create_surface
 from yamlui.widget import Widget
 
@@ -69,77 +70,14 @@ class GameViewport(Widget):
 
     """
 
-    def __init__(self, definition, style={}):
+    def __init__(self, definition, style={}, parent=None):
         super(GameViewport, self).__init__(definition, style=style)
+        self.children = parse_children(definition, widget=self, style=style)
 
         self.surface = create_surface(self, ViewportSurface)
 
-        # Pre-load resources
-        township.images.load_terrain()
-        township.images.load_map_resources()
-
-        # TODO(SotK): Map generation shouldn't happen here
-        # Should be loading a map that was pre-generated in
-        # the menu screen.
-        self.map = township.map.Map(123123456574)
-
-        # TODO(SotK): There needs to be a Game object that handles things
-        # like selection, plus things like buildings and units
-        self.state = 'idle'
-        self.selected = []
-        self.selected_items = []
-        self.selection_origin = None
-        self.current_tile = None
-
         self.dx = self.dy = self.xoffset = self.yoffset = 0
 
-    def clear_selection(self):
-        for tile in self.selected:
-            tile.select()
-            tile.chunk.dirty = True
-        for item in self.selected_items:
-            item.select()
-        self.selected = []
-        self.selected_items = []
-
-    def select_tile(self, x, y):
-        tile = self.map.get_tile(x, y)
-        selected = tile.select()
-        tile.chunk.dirty = True
-        self.selection_origin = tile
-        if selected is None:
-            self.selected.append(tile)
-            for item in self.selected_items:
-                item.select()
-            self.selected_items = []
-        else:
-            self.selected_items.append(selected)
-
-    def select_to_tile(self, x, y):
-        if not self.selected:
-            self.select_tile(x, y)
-            return
-        tile = self.map.get_tile(x, y)
-
-        x_range = range(min(self.selection_origin.x, tile.x),
-                        max(self.selection_origin.x, tile.x) + 1)
-        y_range = range(min(self.selection_origin.y, tile.y),
-                        max(self.selection_origin.y, tile.y) + 1)
-
-        selection = []
-        for tile_x in x_range:
-            for tile_y in y_range:
-                tile = self.map.get_tile(tile_x * 16, tile_y * 16)
-                if not tile.selected:
-                    tile.select(select_items=False)
-                    tile.chunk.dirty = True
-                selection.append(tile)
-
-        for tile in self.selected:
-            if tile not in selection:
-                tile.select()
-                tile.chunk.dirty = True
-        self.selected = selection
 
     def handle_event(self, event):
         """Handle an event.
@@ -171,38 +109,40 @@ class GameViewport(Widget):
                 self.xoffset = 0
                 self.yoffset = 0
                 return True
-            elif event.key == pygame.K_s and self.selected:
-                stockpile = township.constructions.Stockpile(self.selected)
-                self.map.stockpiles.append(stockpile)
-                for tile in self.selected:
+            elif event.key == pygame.K_s and self.bound_object.selected:
+                stockpile = township.constructions.Stockpile(
+                    self.bound_object.selected)
+                self.bound_object.map.stockpiles.append(stockpile)
+                for tile in self.bound_object.selected:
                     tile.select()
                     tile.chunk.dirty = True
-                self.selected = []
+                self.bound_object.selected = []
                 return True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # TODO(SotK): Make this 1 a constant. It is the left mouse button.
             if event.button == 1:
-                self.state = 'selecting'
-                self.clear_selection()
+                self.bound_object.state = 'selecting'
+                self.bound_object.clear_selection()
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
-                self.select_tile(*position)
+                self.bound_object.select_tile(*position)
                 return True
         elif event.type == pygame.MOUSEMOTION:
-            if self.state == 'selecting':
+            if self.bound_object.state == 'selecting':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
-                self.select_to_tile(*position)
+                self.bound_object.select_to_tile(*position)
                 return True
-            elif self.state == 'idle':
+            elif self.bound_object.state == 'idle':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
-                self.current_tile = self.map.get_tile(*position)
+                self.bound_object.current_tile = (
+                    self.bound_object.map.get_tile(*position))
         elif event.type == pygame.MOUSEBUTTONUP:
-            self.state = 'idle'
+            self.bound_object.state = 'idle'
             # TODO(SotK): Make this 3 a constant. It is the right mouse button.
             if event.button == 3:
-                self.clear_selection()
+                self.bound_object.clear_selection()
                 return True
         return False
 
@@ -210,13 +150,16 @@ class GameViewport(Widget):
         """Update the viewport."""
         self.xoffset += self.dx
         self.yoffset += self.dy
-        self.map.update(self.surface, self.xoffset, self.yoffset)
+        self.bound_object.map.update(self.surface, self.xoffset, self.yoffset)
 
         # Redraw the game onto the viewport surface
         ui_tree = yamlui.trees.get('maptest.yaml')
         minimap = ui_tree.get('minimap-panel')
-        self.map.draw(
+        self.bound_object.map.draw(
             self.surface, self.xoffset, self.yoffset, minimap.surface)
+
+        for child in self.children:
+            child.update()
 
     def draw(self, surface):
         """Draw the viewport onto the given surface.
@@ -225,3 +168,6 @@ class GameViewport(Widget):
 
         """
         self.surface.draw(surface)
+
+        for child in self.children:
+            child.draw(surface)

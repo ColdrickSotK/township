@@ -14,7 +14,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from opensimplex import OpenSimplex
 import pygame
 
 import township
@@ -28,41 +27,17 @@ def register_widgets():
         'game': township.ui.game.GameViewport
     })
 
+def register_controllers():
+    """Add custom controllers to the yamlui callback dictionary."""
+    yamlui.callbacks.update({
+        'game_controller': township.ui.GameController
+    })
 
-def get_current_tile_info(event=None, widget=None, **kwargs):
-    ui_tree = yamlui.trees.get('maptest.yaml')
-    if ui_tree is None:
-        return 'No tile selected'
-    game = ui_tree.get('game-viewport')
-    tile = game.current_tile
-    tile_info = """Tile: (%d, %d)
-  Type: %s
-  Height: %dm
-  Resources: %s""" % (
-        tile.x,
-        tile.y,
-        tile.type.capitalize(),
-        tile.height * 400,
-        tile.get_resource())
-    return tile_info
-
-
-def get_selection_info(event=None, widget=None, **kwargs):
-    ui_tree = yamlui.trees.get('maptest.yaml')
-    if ui_tree is None:
-        return 'No UI tree'
-    game = ui_tree.get('game-viewport')
-    try:
-        selected = game.selected_items[0]
-    except IndexError:
-        return 'Nothing selected'
-    return str(selected)
 
 pygame.init()
 
 register_widgets()
-yamlui.callbacks['get_current_tile_info'] = get_current_tile_info
-yamlui.callbacks['get_selection_info'] = get_selection_info
+register_controllers()
 window = yamlui.generate_ui('data/ui/maptest.yaml')
 
 clock = pygame.time.Clock()
