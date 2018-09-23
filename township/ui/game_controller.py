@@ -117,7 +117,7 @@ class GameController(object):
 
     def get_current_tile_info(self, event=None, widget=None, **kwargs):
         if self.current_tile is None:
-            return "No tile selected"
+            return ''
         tile_info = """Tile: (%d, %d)
     Type: %s
     Height: %dm

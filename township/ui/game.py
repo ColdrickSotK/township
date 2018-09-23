@@ -78,7 +78,6 @@ class GameViewport(Widget):
 
         self.dx = self.dy = self.xoffset = self.yoffset = 0
 
-
     def handle_event(self, event):
         """Handle an event.
 
