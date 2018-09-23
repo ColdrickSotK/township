@@ -85,30 +85,36 @@ class GameViewport(Widget):
         This function deals with handling keypresses and mouse input.
 
         """
+        handled = False
+        for child in reversed(self.children):
+            handled = child.handle_event(event)
+            if handled:
+                return handled
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 self.dx = -4
-                return True
+                handled = True
             elif event.key == pygame.K_LEFT:
                 self.dx = 4
-                return True
+                handled = True
             elif event.key == pygame.K_DOWN:
                 self.dy = -4
-                return True
+                handled = True
             elif event.key == pygame.K_UP:
                 self.dy = 4
-                return True
+                handled = True
         elif event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 self.dx = 0
-                return True
+                handled = True
             elif event.key in (pygame.K_UP, pygame.K_DOWN):
                 self.dy = 0
-                return True
+                handled = True
             elif event.key == pygame.K_o:
                 self.xoffset = 0
                 self.yoffset = 0
-                return True
+                handled = True
             elif event.key == pygame.K_s and self.bound_object.selected:
                 stockpile = township.constructions.Stockpile(
                     self.bound_object.selected)
@@ -117,7 +123,7 @@ class GameViewport(Widget):
                     tile.select()
                     tile.chunk.dirty = True
                 self.bound_object.selected = []
-                return True
+                handled = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # TODO(SotK): Make this 1 a constant. It is the left mouse button.
             if event.button == 1:
@@ -126,13 +132,13 @@ class GameViewport(Widget):
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
                 self.bound_object.select_tile(*position)
-                return True
+                handled = True
         elif event.type == pygame.MOUSEMOTION:
             if self.bound_object.state == 'selecting':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
                 self.bound_object.select_to_tile(*position)
-                return True
+                handled = True
             elif self.bound_object.state == 'idle':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
@@ -143,8 +149,9 @@ class GameViewport(Widget):
             # TODO(SotK): Make this 3 a constant. It is the right mouse button.
             if event.button == 3:
                 self.bound_object.clear_selection()
-                return True
-        return False
+                handled = True
+
+        return handled
 
     def update(self):
         """Update the viewport."""
