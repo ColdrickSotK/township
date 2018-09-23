@@ -21,6 +21,7 @@ import pygame
 
 from township import conf
 from township import images
+from township.actors import Villager
 from township.constructions import Stockpile
 from township.resources import Rock, Tree
 
@@ -339,6 +340,8 @@ class Map(object):
         self.chunks = {}
         self.render_set = set()
         self.stockpiles = []
+        self.actors = pygame.sprite.Group()
+        self.actors.add(Villager())
         if generate:
             self.chunks = self._generate_initial_chunks(x, y)
 
@@ -453,6 +456,7 @@ class Map(object):
             minimap.fill((0, 0, 0))
         for chunk in self.render_set:
             chunk.draw(surface, xoffset, yoffset, 'tiles')
+        self.actors.draw(surface)
 
         if minimap is not None:
             minimap_x_offset = minimap.get_width() / 2
