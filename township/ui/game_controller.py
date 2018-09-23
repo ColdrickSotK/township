@@ -40,6 +40,7 @@ class GameController(object):
         self.state = 'idle'
         self.selected = []
         self.selected_items = []
+        self.selected_actors = set()
         self.selection_origin = None
         self.current_tile = None
 
@@ -50,11 +51,11 @@ class GameController(object):
             tile.chunk.dirty = True
         for item in self.selected_items:
             item.select()
-        for actor in self.map.actors:
-            if actor.selected:
-                actor.select()
+        for actor in self.selected_actors:
+            actor.select()
         self.selected = []
         self.selected_items = []
+        self.selected_actors = set()
 
     def select_tile(self, x, y):
         """Select the tile at pixel (x, y).
@@ -119,11 +120,16 @@ class GameController(object):
         self.selected = selection
 
     def select_actor(self, x, y):
+        handled = False
         for actor in self.map.actors:
             if actor.rect.collidepoint(x, y):
                 actor.select()
-                return True
-        return False
+                if actor in self.selected_actors:
+                    self.selected_actors.remove(actor)
+                else:
+                    self.selected_actors.add(actor)
+                handled = True
+        return handled
 
     def get_current_tile_info(self, event=None, widget=None, **kwargs):
         if self.current_tile is None:
