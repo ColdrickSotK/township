@@ -15,6 +15,9 @@
 
 """A controller to manage game state."""
 
+
+import pygame
+
 import township
 
 
@@ -40,7 +43,7 @@ class GameController(object):
         self.state = 'idle'
         self.selected = []
         self.selected_items = []
-        self.selected_actors = set()
+        self.selected_actors = pygame.sprite.Group()
         self.selection_origin = None
         self.current_tile = None
 
@@ -55,7 +58,7 @@ class GameController(object):
             actor.select()
         self.selected = []
         self.selected_items = []
-        self.selected_actors = set()
+        self.selected_actors = pygame.sprite.Group()
 
     def select_tile(self, x, y):
         """Select the tile at pixel (x, y).
