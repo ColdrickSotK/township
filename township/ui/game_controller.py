@@ -156,3 +156,8 @@ class GameController(object):
         if self.selected_items:
             return str(self.selected_items[0])
         return ''
+
+    def get_selected_actor_info(self, event=None, widget=None, **kwargs):
+        if self.selected_actors:
+            return str(self.selected_actors.sprites()[0])
+        return ''
