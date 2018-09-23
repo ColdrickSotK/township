@@ -44,11 +44,30 @@ class Villager(Sprite):
         self.role = 'chieftain'
         self.relationships = {}
 
+        # The following attributes describe aspects of the villager's state
+        # which directly affect how it is rendered.
+        self.selected = False
+
         # The following attributes are implementation details for rendering
         # the villager on the screen
+        self.dirty = False
         self.image = Surface((16, 16), flags=SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
-        circle(self.image, (0, 0, 0), (8, 8), 6)
+        self._redraw()
         self.rect = self.image.get_rect()
         self.rect.x = 500
         self.rect.y = 500
+
+    def _redraw(self):
+        self.image.fill((0, 0, 0, 0))
+        circle(self.image, (0, 0, 0), (8, 8), 6)
+        if self.selected:
+            circle(self.image, (255, 255, 255), (8, 8), 8, 1)
+
+    def update(self):
+        if self.dirty:
+            self._redraw()
+            self.dirty = False
+
+    def select(self):
+        self.selected = not self.selected
+        self.dirty = True

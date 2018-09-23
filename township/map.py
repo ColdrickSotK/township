@@ -443,6 +443,8 @@ class Map(object):
                 chunk = self._get_chunk_at(x, y)
                 self.render_set.add(chunk)
 
+        self.actors.update()
+
     def draw(self, surface, xoffset, yoffset, minimap=None):
         """Draw the map onto a surface with a given offset.
 

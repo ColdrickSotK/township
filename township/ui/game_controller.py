@@ -50,6 +50,9 @@ class GameController(object):
             tile.chunk.dirty = True
         for item in self.selected_items:
             item.select()
+        for actor in self.map.actors:
+            if actor.selected:
+                actor.select()
         self.selected = []
         self.selected_items = []
 
@@ -114,6 +117,13 @@ class GameController(object):
                 tile.select()
                 tile.chunk.dirty = True
         self.selected = selection
+
+    def select_actor(self, x, y):
+        for actor in self.map.actors:
+            if actor.rect.collidepoint(x, y):
+                actor.select()
+                return True
+        return False
 
     def get_current_tile_info(self, event=None, widget=None, **kwargs):
         if self.current_tile is None:

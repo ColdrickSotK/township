@@ -126,12 +126,20 @@ class GameViewport(Widget):
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # TODO(SotK): Make this 1 a constant. It is the left mouse button.
             if event.button == 1:
-                self.bound_object.state = 'selecting'
+                # First, check if the click is on an actor like a Villager. If
+                # so then select the actor and skip tile-based selection.
                 self.bound_object.clear_selection()
-                position = (event.pos[0] - self.xoffset,
-                            event.pos[1] - self.yoffset)
-                self.bound_object.select_tile(*position)
-                handled = True
+                handled = self.bound_object.select_actor(
+                    event.pos[0], event.pos[1])
+
+                # If an actor wasn't selected, then move onto tile-based
+                # selection.
+                if not handled:
+                    self.bound_object.state = 'selecting'
+                    position = (event.pos[0] - self.xoffset,
+                                event.pos[1] - self.yoffset)
+                    self.bound_object.select_tile(*position)
+                    handled = True
         elif event.type == pygame.MOUSEMOTION:
             if self.bound_object.state == 'selecting':
                 position = (event.pos[0] - self.xoffset,
