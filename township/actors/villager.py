@@ -66,6 +66,12 @@ class Villager(Sprite):
         self.position = [500, 500]
         self.target = self.position
 
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
     def _redraw(self):
         self.image.fill((0, 0, 0, 0))
         circle(self.image, (0, 0, 0), (8, 8), 6)
