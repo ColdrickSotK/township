@@ -58,11 +58,14 @@ class GameViewport(Widget):
 
     """A viewport in which to render the game.
 
-    This viewport also handles hotkey presses and mouse input.
+    This viewport also handles hotkey presses and mouse input. It only works
+    correctly when an instance of ``township.ui.GameController`` is bound to
+    it using the bind-object callback.
 
-    Example yaml definition:
+    Example YAML definition:
 
         - object: game
+          bind-object: my_controller
           properties:
             position: [0, 0]
             width: 1280
@@ -74,8 +77,13 @@ class GameViewport(Widget):
         super(GameViewport, self).__init__(definition, style=style)
         self.children = parse_children(definition, widget=self, style=style)
 
-        self.surface = create_surface(self, ViewportSurface)
+        # `self.game` is set by the superclass constructor, assuming
+        # that `bind-object` is set in the YAML definition of the viewport.
+        # We make `self.game` an alias to it here, so that the code makes more
+        # sense to avoid lots of mentions of bound objects.
+        self.game = self.bound_object
 
+        self.surface = create_surface(self, ViewportSurface)
         self.dx = self.dy = self.xoffset = self.yoffset = 0
 
     def handle_event(self, event):
@@ -114,48 +122,48 @@ class GameViewport(Widget):
                 self.xoffset = 0
                 self.yoffset = 0
                 handled = True
-            elif event.key == pygame.K_s and self.bound_object.selected:
+            elif event.key == pygame.K_s and self.game.selected:
                 stockpile = township.constructions.Stockpile(
-                    self.bound_object.selected)
-                self.bound_object.map.stockpiles.append(stockpile)
-                for tile in self.bound_object.selected:
+                    self.game.selected)
+                self.game.map.stockpiles.append(stockpile)
+                for tile in self.game.selected:
                     tile.select()
                     tile.chunk.dirty = True
-                self.bound_object.selected = []
+                self.game.selected = []
                 handled = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # TODO(SotK): Make this 1 a constant. It is the left mouse button.
             if event.button == 1:
                 # First, check if the click is on an actor like a Villager. If
                 # so then select the actor and skip tile-based selection.
-                self.bound_object.clear_selection()
-                handled = self.bound_object.select_actor(
+                self.game.clear_selection()
+                handled = self.game.select_actor(
                     event.pos[0], event.pos[1])
 
                 # If an actor wasn't selected, then move onto tile-based
                 # selection.
                 if not handled:
-                    self.bound_object.state = 'selecting'
+                    self.game.state = 'selecting'
                     position = (event.pos[0] - self.xoffset,
                                 event.pos[1] - self.yoffset)
-                    self.bound_object.select_tile(*position)
+                    self.game.select_tile(*position)
                     handled = True
         elif event.type == pygame.MOUSEMOTION:
-            if self.bound_object.state == 'selecting':
+            if self.game.state == 'selecting':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
-                self.bound_object.select_to_tile(*position)
+                self.game.select_to_tile(*position)
                 handled = True
-            elif self.bound_object.state == 'idle':
+            elif self.game.state == 'idle':
                 position = (event.pos[0] - self.xoffset,
                             event.pos[1] - self.yoffset)
-                self.bound_object.current_tile = (
-                    self.bound_object.map.get_tile(*position))
+                self.game.current_tile = (
+                    self.game.map.get_tile(*position))
         elif event.type == pygame.MOUSEBUTTONUP:
-            self.bound_object.state = 'idle'
+            self.game.state = 'idle'
             # TODO(SotK): Make this 3 a constant. It is the right mouse button.
             if event.button == 3:
-                self.bound_object.clear_selection()
+                self.game.clear_selection()
                 handled = True
 
         return handled
@@ -164,12 +172,12 @@ class GameViewport(Widget):
         """Update the viewport."""
         self.xoffset += self.dx
         self.yoffset += self.dy
-        self.bound_object.map.update(self.surface, self.xoffset, self.yoffset)
+        self.game.map.update(self.surface, self.xoffset, self.yoffset)
 
         # Redraw the game onto the viewport surface
         ui_tree = yamlui.trees.get('maptest.yaml')
         minimap = ui_tree.get('minimap-panel')
-        self.bound_object.map.draw(
+        self.game.map.draw(
             self.surface, self.xoffset, self.yoffset, minimap.surface)
 
         for child in self.children:
