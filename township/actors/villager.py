@@ -19,6 +19,8 @@ from pygame import Surface
 from pygame.sprite import Sprite
 from pygame.draw import circle
 
+from township.util.vectors import Vector2
+
 
 class Villager(Sprite):
 
@@ -36,11 +38,16 @@ class Villager(Sprite):
             'intelligence': 10,
             'wisdom': 10,
             'charisma': 10,
-            'speed': 10
+            'speed': 10.0
         }
 
+        # The following attributes describe what the villager is currently
+        # doing, and how fast they're doing it.
+        self.state = 'idle'
+        self.velocity = Vector2(0, 0)
+
         # The following attributes describe the villager's place in the
-        # social hierarchy of the township
+        # social hierarchy of the township.
         self.role = 'chieftain'
         self.relationships = {}
 
@@ -49,13 +56,15 @@ class Villager(Sprite):
         self.selected = False
 
         # The following attributes are implementation details for rendering
-        # the villager on the screen
+        # the villager on the screen.
         self.dirty = False
         self.image = Surface((16, 16), flags=SRCALPHA)
         self._redraw()
         self.rect = self.image.get_rect()
         self.rect.x = 500
         self.rect.y = 500
+        self.position = [500, 500]
+        self.target = self.position
 
     def _redraw(self):
         self.image.fill((0, 0, 0, 0))
@@ -63,11 +72,28 @@ class Villager(Sprite):
         if self.selected:
             circle(self.image, (255, 255, 255), (8, 8), 8, 1)
 
-    def update(self):
+    def update(self, xoffset, yoffset):
         if self.dirty:
             self._redraw()
             self.dirty = False
+        if self.state == 'moving':
+            self.position[0] += self.velocity.x
+            self.position[1] += self.velocity.y
+
+            distance = Vector2.from_points(self.position, self.target)
+            if distance.magnitude <= 4:
+                self.state = 'idle'
+                self.target = self.position
+
+        # Move the sprite into position, accounting for viewport offset
+        self.rect.x = self.position[0] + xoffset
+        self.rect.y = self.position[1] + yoffset
 
     def select(self):
         self.selected = not self.selected
         self.dirty = True
+
+    def move_to(self, x, y):
+        self.state = 'moving'
+        self.target = [x, y]
+        self.velocity = Vector2.from_points(self.position, (x, y)).normalised

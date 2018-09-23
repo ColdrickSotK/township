@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Adam Coldrick
+# Copyright (c) 2017-2018 Adam Coldrick
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -163,7 +163,15 @@ class GameViewport(Widget):
             self.game.state = 'idle'
             # TODO(SotK): Make this 3 a constant. It is the right mouse button.
             if event.button == 3:
-                self.game.clear_selection()
+                if self.game.selected_actors:
+                    # If one or more actors are selected, right click is a
+                    # command for them to move.
+                    position = (event.pos[0] - self.xoffset,
+                                event.pos[1] - self.yoffset)
+                    self.game.move_selected(*position)
+                else:
+                    self.game.clear_selection()
+
                 handled = True
 
         return handled

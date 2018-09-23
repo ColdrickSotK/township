@@ -131,6 +131,10 @@ class GameController(object):
                 handled = True
         return handled
 
+    def move_selected(self, x, y):
+        for actor in self.selected_actors:
+            actor.move_to(x, y)
+
     def get_current_tile_info(self, event=None, widget=None, **kwargs):
         if self.current_tile is None:
             return ''
