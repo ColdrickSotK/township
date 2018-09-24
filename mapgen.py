@@ -15,31 +15,12 @@
 
 
 import pygame
-
-import township
 import yamlui
-
-
-def register_widgets():
-    """Add custom ui widgets to the yamlui class mapping."""
-    # TODO(SotK): Minimap widget
-    yamlui.class_mapping.update({
-        'game': township.ui.game.GameViewport
-    })
-
-def register_controllers():
-    """Add custom controllers to the yamlui callback dictionary."""
-    yamlui.callbacks.update({
-        'game_controller': township.ui.GameController
-    })
 
 
 pygame.init()
 
-register_widgets()
-register_controllers()
-window = yamlui.generate_ui('data/ui/maptest.yaml')
-
+window = yamlui.generate_ui('data/ui/maptest.yaml', ['township'])
 clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():

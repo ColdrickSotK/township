@@ -17,10 +17,12 @@
 
 
 import pygame
+import yamlui
 
 import township
 
 
+@yamlui.callback('game_controller')
 class GameController(object):
 
     """A controller to contain game state and drive the GameViewport.

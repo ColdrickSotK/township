@@ -17,12 +17,12 @@
 
 
 import pygame
-
-import township
 import yamlui
 from yamlui.parsing import parse_children
 from yamlui.util import create_surface
 from yamlui.widget import Widget
+
+import township
 
 
 class ViewportSurface(pygame.Surface):
@@ -54,6 +54,7 @@ class ViewportSurface(pygame.Surface):
         surface.blit(self, self.rect)
 
 
+@yamlui.widget('game')
 class GameViewport(Widget):
 
     """A viewport in which to render the game.
