@@ -1,17 +1,18 @@
 definition:
   object: window
   properties:
-    width: 1280
-    height: 800
+    width: 1920
+    height: 1080
     colour: [0, 0, 0]
     text: Township Map Generator
+    fullscreen: yes
   children:
   - object: game
     bind-object: game_controller
     properties:
       name: game-viewport
-      width: 1280
-      height: 800
+      width: 1920
+      height: 1080
       position: [0, 0]
       color: [0, 0, 0]
     children:
